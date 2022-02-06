@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Task2
 {
-    public class DictionaryOperations
+    public static class DictionaryExtensions
     {
-        public static SortedDictionary<long, string> ToSortedDictionary(Dictionary<string, long> inputDictionary)
+        public static SortedDictionary<long, string> ToSortedDictionary(this Dictionary<string, long> inputDictionary)
         {
             SortedDictionary<long, string > result = new SortedDictionary<long, string>();
             foreach (var key in inputDictionary.Keys)

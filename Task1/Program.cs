@@ -3,38 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
-namespace Task2
+namespace Task1
 {
     public static class Program
     {
         static void Main()
         {
-            var ourTextDictionary = FileWorker.CompleteDictionaryFromFile();
+            List<string> ourList = FileWorker.CompleteListFromFile();
+            LinkedList<string> ourLinkedList = ourList.ToLinkedList();
 
-            if(ourTextDictionary.Count == 0)
-            {
-                Console.WriteLine("Словарь не заполнен, работа программы завершена. Нажмите любую клавишу...");
-                Console.ReadKey();
-                return;
-            }
+            // запускаем новый таймер
+            var stopWatch = Stopwatch.StartNew();
 
-            var ourSortedDictionary = DictionaryOperations.ToSortedDictionary(ourTextDictionary);
+            // Добавим элемент в обычный список
+            ourList.Add("случайное слово");
 
-            byte wordsCount = 10;
-            Console.WriteLine($"{wordsCount} наиболее часто используемых слов в выбранном тексте:");
+            // смотрим, сколько операция заняла, в миллисекундах
+            Console.WriteLine("Добавление элемента в обычный список: " + stopWatch.Elapsed.TotalMilliseconds);
 
-            
-            foreach(var currentPair in ourSortedDictionary.Reverse())
-            {
-                wordsCount--;
-                Console.WriteLine($"{10 - wordsCount}: " + ourSortedDictionary[currentPair.Key] + $" (встречается раз: {currentPair.Key})");
+            // запускаем новый таймер
+            stopWatch = Stopwatch.StartNew();
 
-                if(wordsCount == 0)
-                {
-                    break;
-                }
-            }
+            // Добавим элемент в обычный список
+            ourLinkedList.AddLast("случайное слово");
+
+            // смотрим, сколько операция заняла, в миллисекундах
+            Console.WriteLine("Добавление элемента в связный список: " + stopWatch.Elapsed.TotalMilliseconds);
 
             Console.WriteLine("Нажмите любую клавишу...");
             Console.ReadKey();

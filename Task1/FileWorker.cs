@@ -8,45 +8,26 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Task2
+namespace Task1
 {
     public static class FileWorker
     {
-        public static Dictionary<string, long> CompleteDictionaryFromFile()
+        public static List<string> CompleteListFromFile()
         {
-            Dictionary<string, long> words = new Dictionary<string, long>();
+            List<string> words = new List<string>();
 
-            Console.WriteLine("Введите путь к текстовому файлу:");
-            string FileURL = Console.ReadLine() ?? "";
+            StreamReader FileStream = OpenFileToStream();
 
-            //Заменяем слэши
-            FileURL = NormalizeURL(FileURL);
-
-            //Если получили некорректный путь - возврат
-            if (!File.Exists(FileURL))
+            string str = "";
+            while ((str = FileStream.ReadLine()) != null) // Пока не кончатся строки - считываем из файла по одной
             {
-                Console.WriteLine("Введен некорректнуй путь.");
-                return words;
-            }
+                string[] subStrings = str.Split(TextOperations.Delimiters, StringSplitOptions.RemoveEmptyEntries);
 
-            // Откроем файл и прочитаем его содержимое
-            using (StreamReader sr = File.OpenText(FileURL))
-            {
-                string str = "";
-                while ((str = sr.ReadLine()) != null) // Пока не кончатся строки - считываем из файла по одной
+                foreach(string currentWord in subStrings)
                 {
-                    string[] subStrings = str.Split(TextOperations.Delimiters, StringSplitOptions.RemoveEmptyEntries);
-
-                    foreach(string currentWord in subStrings)
+                    if (!words.Contains(currentWord.ToLower()))
                     {
-                        if (words.ContainsKey(currentWord.ToLower()))
-                        {
-                            words[currentWord.ToLower()] += 1;
-                        }
-                        else
-                        {
-                            words.Add(currentWord.ToLower(), 1);
-                        }
+                        words.Add(currentWord.ToLower());
                     }
                 }
             }
@@ -55,6 +36,33 @@ namespace Task2
 
         }
 
+        public static StreamReader OpenFileToStream()
+        {
+            // Откроем файл и прочитаем его содержимое
+
+            InputPath(out string FileURL);
+            StreamReader sr = File.OpenText(FileURL);
+
+            return sr;
+
+        }
+
+        private static void InputPath(out string FileURL)
+        {
+            Console.WriteLine("Введите путь к текстовому файлу:");
+            FileURL = Console.ReadLine() ?? "";
+
+            //Заменяем слэши
+            FileURL = NormalizeURL(FileURL);
+
+            //Если получили некорректный путь - возврат
+            if (!File.Exists(FileURL))
+            {
+                Console.WriteLine("Введен некорректнуй путь.");
+                InputPath(out FileURL);
+            }
+
+        }
 
         /// <summary>
         /// Заменяет символ '\' на '/'
